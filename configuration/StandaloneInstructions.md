@@ -85,16 +85,24 @@ Two python scripts are in the streaming folder of the repo: twitter_connect.py a
 
 Edit `twitter_connect.py` to add your Twitter credentials.
 
-
 Run twitter_connect.py and run it with python 3:
 
-[I haven't quite finished editing and testing this yet, I wanted to push the python files first. --Laura]
+    python3 /root/MIDS_W251_Benchmarking/streaming/twitter_connect.py
+
+Note: I can't get it to run from python3 yet so haven't tested below.  --Laura
+
 Test if the twitter topic is created and receiving messages:
-/opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181
-	Should report “twitter” as a topic after twitter_connect.py is running
-Create the spark_pull_tweets.py script (below) and execute it with spark-submit in the following command line:
-/opt/spark/bin/spark-submit --jars /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar /root/spark_pull_tweets.py localhost:9092 twitter
-	While the twitter_connect.py is not running the output of this should look like
+
+    /opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+  Should report “twitter” as a topic after twitter_connect.py is running.
+
+Run the `spark_pull_tweets.py` script with spark-submit in the following command line:
+
+    /opt/spark/bin/spark-submit --jars /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar /root/spark_pull_tweets.py localhost:9092 twitter
+
+While the twitter_connect.py is not running the output of this should look like
+```
 -------------------------------------------
 Time: 2018-07-18 17:25:12
 -------------------------------------------
@@ -103,8 +111,11 @@ Time: 2018-07-18 17:25:14
 -------------------------------------------
 -------------------------------------------
 Time: 2018-07-18 17:25:16
--------------------------------------------
-	However when twitter_connect.py is running the output will be something like:
+-------------------------------------------```
+
+However when twitter_connect.py is running the output will be something like:
+```
+
 -------------------------------------------
 Time: 2018-07-18 17:25:22
 -------------------------------------------
@@ -119,3 +130,4 @@ Time: 2018-07-18 17:25:22
 (u'18:17:30', 1)
 (u'\\u0628\\u0643\\u0644\\u0645\\u0627\\u062a', 1)
 ...
+```
