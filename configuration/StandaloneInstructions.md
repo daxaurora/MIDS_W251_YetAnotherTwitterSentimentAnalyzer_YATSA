@@ -49,6 +49,7 @@ Set up passwordless ssh into localhost:
 Reread the profile (with java environment from previous step)
 
     . /etc/profile
+**Should we disable password based logins?**
 Download, install and start Kafka 0.8.  I’m installing in /opt, but could be anywhere:  
 
     cd /opt
