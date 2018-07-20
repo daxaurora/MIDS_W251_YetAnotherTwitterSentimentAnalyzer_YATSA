@@ -79,7 +79,7 @@ Install git and clone our project's repo into the root directory:
 	cd /root
 	git clone https://github.com/daxaurora/MIDS_W251_Benchmarking.git
 
-Note: to push back into the git repo from the cluster will require setting up ssh keys or configuring collaborators. So for now the standalone cluster can only receive the repo.
+Note: to push changes into the git repo from the cluster will require setting up ssh keys or configuring collaborators on the VS. So without that the standalone cluster can only clone or pull the repo.
 
 Two python scripts are in the streaming folder of the repo: twitter_connect.py and spark_pull_tweets.py.
 
@@ -87,11 +87,9 @@ Edit `twitter_connect.py` to add your Twitter credentials.
 
 Run twitter_connect.py and run it with python 3:
 
-    python3 /root/MIDS_W251_Benchmarking/streaming/twitter_connect.py
+    python3.6 /root/MIDS_W251_Benchmarking/streaming/twitter_connect.py
 
-Note: I can't get it to run from python3 yet so haven't tested below.  --Laura
-
-Test if the twitter topic is created and receiving messages:
+Open another connection to the VS and test if the twitter topic is created and receiving messages:
 
     /opt/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181
 
@@ -99,7 +97,7 @@ Test if the twitter topic is created and receiving messages:
 
 Run the `spark_pull_tweets.py` script with spark-submit in the following command line:
 
-    /opt/spark/bin/spark-submit --jars /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar /root/spark_pull_tweets.py localhost:9092 twitter
+    /opt/spark/bin/spark-submit --jars /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar /root/MIDS_W251_Benchmarking/streaming/spark_pull_tweets.py localhost:9092 twitter
 
 While the twitter_connect.py is not running the output of this should look like
 ```
@@ -111,7 +109,8 @@ Time: 2018-07-18 17:25:14
 -------------------------------------------
 -------------------------------------------
 Time: 2018-07-18 17:25:16
--------------------------------------------```
+-------------------------------------------
+```
 
 However when twitter_connect.py is running the output will be something like:
 ```
