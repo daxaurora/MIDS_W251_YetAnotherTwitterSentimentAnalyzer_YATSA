@@ -1,6 +1,6 @@
 # Setting up Cassandra
 
-Create the VM - sizing not required yet - **replace information in brackets**
+Create the VM - requires a 2 disk server
 
     slcli -y vs create -t Git/MIDS_W251_Benchmarking/configuration/Templates/SoftLayer/small_2disk_private.slcli --hostname=cashost1
 
@@ -16,7 +16,24 @@ Update:
 
     yum -y update; reboot
 
-On the Cassandra server do:
+Set up the second disk:
+	
+	1. Identiify the disk using:
+		fdisk -l | egrep "^Disk /dev"
+		we assume /dev/xvdc for the rest of the instructions, but change as appropriate
+	2. Use fdisk to add a partition
+		fdisk /dev/xvdc
+	3. Type n (new) and keep pressing enter to take the default for each question.  At the end type w to save.  This creates the new partition which is the same as the device with '1' at the end.
+	4. Create the filesystem:
+		mkfs.ext4 /dev/xvdc1
+	5. Set it up to be mounted:
+		echo "/dev/xvdc1	/var/lib/cassandra   ext4   defaults,noatime 0 0" >> /etc/fstab
+	6. Create the directory:
+		mkdir /var/lib/cassandra
+	7. Mount it:
+		mount -a
+
+Install the software packages for Cassandra:
 
     rpm -ivh /tmp/Cassandra/jre-8u181-linux-x64.rpm
 	rpm -ivh /tmp/Cassandra/cassandra-3.11.2-1.noarch.rpm
@@ -42,6 +59,10 @@ Edit the /etc/hosts file, comment out the lines where the hostname is define wit
 
 Edit the /etc/cassandra/conf/cassandra.yaml file and change the following:
 
+		cluster_name: 'Test Cluster'
+	to
+		cluster_name: 'W251Twitter'
+
 		- seeds: "127.0.0.1"
 	to
 		- seeds: "<10. ip address of server>"
@@ -53,3 +74,14 @@ Edit the /etc/cassandra/conf/cassandra.yaml file and change the following:
 		rpc_address: localhost
 	to
 		rpc_address: <10. ip address of server>
+
+Enable and start the service:
+
+	chkconfig cassandra on
+	service cassandra start
+
+Check for errors:
+
+	egrep "ERR|WARN" /var/log/cassandra/system.log
+
+Some warnings can be ignored
