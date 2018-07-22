@@ -4,22 +4,18 @@ Create the VM - sizing not required yet - **replace information in brackets**
 
     slcli -y vs create -t Git/MIDS_W251_Benchmarking/configuration/Templates/SoftLayer/small_2disk_private.slcli --hostname=cashost1
 
-Login:
+Copy packages from gateway server, login to the gateway server and run:
+
+	scp -r /software/Cassandra root@<IP>:/tmp/
+    
+Login to new Cassandra server:
 
     ssh root@<IP>
-
-Optional: update password to something longer than the short one assigned in Softlayer:
-
-    passwd root
 
 Update:
 
     yum -y update; reboot
 
-Copy over data from gateway, login to the gateway server and run
-
-	scp -r /software/Cassandra root@<IP>:/tmp/
-    
 On the Cassandra server do:
 
     rpm -ivh /tmp/Cassandra/jre-8u181-linux-x64.rpm
@@ -46,14 +42,14 @@ Edit the /etc/hosts file, comment out the lines where the hostname is define wit
 
 Edit the /etc/cassandra/conf/cassandra.yaml file and change the following:
 
-	- seeds: "127.0.0.1"
+		- seeds: "127.0.0.1"
 	to
-	- seeds: "<10. ip address of server>"
+		- seeds: "<10. ip address of server>"
 
-	listen_address: localhost
+		listen_address: localhost
 	to
-	listenaddress: <10. ip address of server>
+		listenaddress: <10. ip address of server>
 
-	rpc_address: localhost
+		rpc_address: localhost
 	to
-	rpc_address: <10. ip address of server>
+		rpc_address: <10. ip address of server>
