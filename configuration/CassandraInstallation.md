@@ -85,3 +85,27 @@ Check for errors:
 	egrep "ERR|WARN" /var/log/cassandra/system.log
 
 Some warnings can be ignored
+
+Verify it:
+	
+	nodetool status
+
+should show something like:
+
+	[root@cashost1 conf]# nodetool status
+	Datacenter: W251Twitter
+	=======================
+	Status=Up/Down
+	|/ State=Normal/Leaving/Joining/Moving
+	--  Address       Load       Tokens       Owns (effective)  Host ID                               Rack
+	UN  10.54.41.184  243.43 KiB  256          100.0%            3635de91-0ef4-4858-b7be-4fa4704da17e  rack1
+
+and connecting into the database:
+
+	[root@cashost1 conf]# cqlsh $(hostname) -u cassandra -p cassandra
+	Connected to pdurkinC1 at cashost1.w251.mids:9042.
+	[cqlsh 5.0.1 | Cassandra 3.11.2 | CQL spec 3.4.4 | Native protocol v4]
+	Use HELP for help.
+	cassandra@cqlsh>
+
+
