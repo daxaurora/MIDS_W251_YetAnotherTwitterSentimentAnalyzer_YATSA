@@ -7,6 +7,8 @@ Create the VM - requires a 2 disk server
 Copy packages from gateway server, login to the gateway server and run:
 
 	scp -r /software/Cassandra root@<IP>:/tmp/
+	scp /software/local.repo root@<IP>:/etc/yum.repos.d/
+	scp -r /software/pip root@<IP>:/tmp/
     
 Login to new Cassandra server:
 
@@ -108,4 +110,15 @@ and connecting into the database:
 	Use HELP for help.
 	cassandra@cqlsh>
 
+Set up python on any server that needs access to the database.  The below assumes that the pip packages are in a directory /tmp/pip and then are installed locally (no internet required):
+	yum -y install python36u python36u-pip.noarch
+	pip3.6 install --upgrade --no-index --find-links file:///tmp/pip pip
+	pip3 install --upgrade --no-index --find-links file:///tmp/pip cassandra-driver
 
+Set up initial keyspace:
+	create keyspace w251twitter with replication = {'class':'SimpleStrategy', 'replication_factor':1};
+	use w251twitter;
+	create table twitter_connections(username text, access_token text, access_token_secret text, consumer_key t
+	ext, consumer_secret text, PRIMARY KEY(username));
+
+After this there are utility functions (in this repo) to insert, retrieve and delete these keys
