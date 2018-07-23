@@ -122,3 +122,15 @@ Set up initial keyspace:
 	ext, consumer_secret text, PRIMARY KEY(username));
 
 After this there are utility functions (in this repo) to insert, retrieve and delete these keys
+
+## Adding a second and third node
+
+Follow the same procedure as above, however in the -seeds configuration in cassandra.yaml use the ip address of one of the existing servers.  Set the listen_address and the rpc_address to the localhosts 10.X.Y.Z address and the same cluster name.  Check the "nodetool status" and wait until the state changes to UN to be fully up.  Once the second node has been joined login to one of the nodes and update the replication factor for the keyspace:
+
+	[root@cashost2 cassandra]# cqlsh $(hostname) -u cassandra -p cassandra
+	Connected to W251Twitter at cashost2.w251.mids:9042.
+	[cqlsh 5.0.1 | Cassandra 3.11.2 | CQL spec 3.4.4 | Native protocol v4]
+	Use HELP for help.
+	cassandra@cqlsh> alter keyspace w251twitter with replication = { 'class' : 'SimpleStrategy', 'replication_factor' :2};
+
+and for the third node change the replication factor to 3 (that should be enough replication so further updates not required).
