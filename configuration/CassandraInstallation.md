@@ -111,11 +111,13 @@ and connecting into the database:
 	cassandra@cqlsh>
 
 Set up python on any server that needs access to the database.  The below assumes that the pip packages are in a directory /tmp/pip and then are installed locally (no internet required):
+
 	yum -y install python36u python36u-pip.noarch
 	pip3.6 install --upgrade --no-index --find-links file:///tmp/pip pip
 	pip3 install --upgrade --no-index --find-links file:///tmp/pip cassandra-driver
 
 Set up initial keyspace:
+
 	create keyspace w251twitter with replication = {'class':'SimpleStrategy', 'replication_factor':1};
 	use w251twitter;
 	create table twitter_connections(username text, access_token text, access_token_secret text, consumer_key t
