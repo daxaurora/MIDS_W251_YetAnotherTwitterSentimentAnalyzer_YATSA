@@ -4,8 +4,8 @@ CoreNLP Version 3.9.1 website: https://stanfordnlp.github.io/CoreNLP/
 
 Download the server distribution:
 
-    wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-01-31.zip
-	 unzip stanford-corenlp-full-2018-01-31.zip
+    wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-02-27.zip
+	 unzip stanford-corenlp-full-2018-02-27.zip
 	
 Start the server (requires Java 8):
 
