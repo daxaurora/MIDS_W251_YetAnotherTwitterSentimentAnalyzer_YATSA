@@ -131,3 +131,15 @@ Time: 2018-07-18 17:25:22
 (u'\\u0628\\u0643\\u0644\\u0645\\u0627\\u062a', 1)
 ...
 ```
+
+To run the updated stream for filtered topics and sentiment analysis:
+
+Edit `twitter_connect_topic.py` to add your Twitter credentials.
+
+Run it with python 3:
+
+    python3.6 /root/MIDS_W251_Benchmarking/streaming/twitter_connect_topic.py
+
+Open another connection to the VS to run the `spark_process.py` script with spark-submit in the following command line:
+
+    /opt/spark/bin/spark-submit --jars /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar /root/MIDS_W251_Benchmarking/streaming/spark_process.py localhost:9092 twitter
