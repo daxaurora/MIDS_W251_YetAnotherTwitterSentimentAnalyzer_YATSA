@@ -13,23 +13,32 @@ def derive_sentiment(sent, sentValue):
         return sentValue
 
 
+def removeNonAscii(s): return "".join(filter(lambda x: ord(x)<128, s))
+
+
 def get_sentiment(tweet_text):
     nlp = StanfordCoreNLP('http://localhost:9000')
     sentiment = 0
-    if isinstance(tweet_text, str) and tweet_text != None:
-        response = nlp.annotate(tweet_text,
+    if tweet_text != None:
+        response = nlp.annotate(removeNonAscii(tweet_text).encode('ascii'),
                                 properties={
                                     'annotators': 'sentiment',
                                     'outputFormat': 'json',
                                     'timeout': 1000,
                                 })
 
+	print("Sentiment response:\n{}".format(response))
+
         for s in response['sentences']:
-            ind = s["index"]
-            words = " ".join([t["word"] for t in s["tokens"]])
-            sent = s["sentiment"]
-            sent_value = s["sentimentValue"]
+	    sent_response = json.loads(s)
+            ind = sent_response["index"]
+            words = " ".join([t["word"] for t in sent_response["tokens"]])
+            sent = sent_response["sentiment"]
+            sent_value = sent_response["sentimentValue"]
             sentiment += derive_sentiment(sent, sent_value)
+	
+	print("Returning derived sentiment: {}".format(sentiment))
+
     return sentiment
 
 
@@ -40,7 +49,7 @@ if __name__ == "__main__":
     kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers})
     tweets = kvs.map(lambda x: json.loads(x[1]))
     tweets.count().map(lambda x: 'Tweets in this batch: %s' % x).pprint()
-    text_dstream = tweets.map(lambda tweet: tweet['text'])
+    text_dstream = tweets.map(lambda tweet: json.loads(tweet)['text'])
 
     sentiments = text_dstream.map(lambda tweet_text: (get_sentiment(tweet_text), tweet_text))
     sentiments.pprint()
