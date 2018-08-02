@@ -22,14 +22,15 @@ class StdOutListener(StreamListener):
 
     def __init__(self):
         cluster=Cluster(['cassandra1','cassandra2','cassandra3'])
-        session=cluster.connect('w251twitter')
+        self.session=cluster.connect('w251twitter')
 
     def on_data(self, data):
         if data and ('delete' not in data):
-            session.execute(
+            self.session.execute(
                     """
-                    INSERT INTO TWEETS(tweet, insertion_time) VALUES (data.encode('utf-8'), toTimestamp(now())
-                    """)
+                    INSERT INTO TWEETS(tweet, insertion_time) VALUES (%s, toTimestamp(now())
+                    """,
+                    (data.encode('utf-8'))
 
             tweet_json = get_tweet_json(data)
             if tweet_json:
