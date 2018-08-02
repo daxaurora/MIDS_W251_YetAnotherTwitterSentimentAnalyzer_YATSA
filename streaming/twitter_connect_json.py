@@ -127,7 +127,7 @@ def get_next_tweet(twitter_stream, i):
 #tweet_json = get_tweet_json(SAMPLE_TWEET)
 #print("tweet JSON:\n {}".format(tweet_json))
 
-kafka = KafkaClient("kafka.spark:9092")
+kafka = KafkaClient("localhost:9092")
 producer = SimpleProducer(kafka)
 l = StdOutListener()
 auth = OAuthHandler(consumer_key, consumer_secret)
