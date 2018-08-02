@@ -1,3 +1,6 @@
+import sys
+from cassandra.cluster import Cluster
+
 import dateutil.parser
 import json
 from pyspark import SparkContext
@@ -18,6 +21,7 @@ SAMPLE_TWEET = '{"created_at": "Tue Jul 31 22:11:14 +0000 2018", "id": 102441722
 class StdOutListener(StreamListener):
     def on_data(self, data):
         if data and ('delete' not in data):
+	    save_tweet(data)
             tweet_json = get_tweet_json(data)
             if tweet_json:
                 producer.send_messages("twitter", tweet_json.encode('utf-8'))
@@ -26,6 +30,12 @@ class StdOutListener(StreamListener):
 
     def on_error(self, status):
         print(status)
+
+    def save_tweet(data):
+	session.execute(
+		"""
+		INSERT INTO TWEETS (tweet, insertion_time) VALUES (data, toTimestamp(now())
+		""")
 
 
 class Tweet(dict):
@@ -126,3 +136,4 @@ stream.filter(languages = ['en'],
                  '#AntMan', '#Ant-Man', '#Ant-man', 'Antman',
                  'TheWasp', '#AntManandTheWasp', '#AntManAndTheWasp', '#Trump', '#trump'
                   ])
+
