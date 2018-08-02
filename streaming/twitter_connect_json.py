@@ -20,6 +20,7 @@ class StdOutListener(StreamListener):
         if data and ('delete' not in data):
             tweet_json = get_tweet_json(data)
             if tweet_json:
+		session.("INSERT INTO TWEETS(tweet, insertion_time) VALUES (data.encode('utf-8'), toTimestamp(now())
                 producer.send_messages("twitter", tweet_json.encode('utf-8'))
                 print(tweet_json)
         return True
