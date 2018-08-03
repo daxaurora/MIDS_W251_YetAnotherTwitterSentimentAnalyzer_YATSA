@@ -34,14 +34,14 @@ The gateway server provides several services to the internal network.  Documente
 	* Extra software for the tools we need for the project
 This directory was set up as /software
 
-10. Set up a vsftpd server for anonymous access to the software repository.  Ensure in /etc/vsftpd/vsftpd.conf that
-	* anonymous_enabled=YES
-	* local_root=/software
+10. Set up an Apache httpd server and point the DocumentRoot to /software
+	yum -y install httpd
+edit /etc/httpd/conf/httpd.conf and set the DocumentRoot
 
-11. Start the vsftpd server:
+11. Start the httpd server:
 
-	systemctl enable vsftpd
-	systemctl start vsftpd
+	systemctl enable httpd
+	systemctl start httpd
 
 12. Download the epel/ius repositories and create the repos from them:
 
@@ -55,13 +55,13 @@ This directory was set up as /software
 
 	[localepel]
 	Name = gatewaylocal
-	baseurl=ftp://10.88.161.198/epel/
+	baseurl=http://10.73.183.212/epel/
 	gpgcheck=0
 	enabled=1
 
 	[localius]
 	name = gatewaylocalius
-	baseurl=ftp://10.88.161.198/ius/
+	baseurl=http://10.73.183.212/ius/
 	gpgcheck=0
 	enabled=1
 
