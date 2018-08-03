@@ -1,4 +1,4 @@
-datacenter=sjc01
+datacenter=dal13
 private=True
 os=CENTOS_LATEST_64
 domain=w251.mids

@@ -4,6 +4,6 @@ billing=hourly
 hostname=abc123
 memory=4096
 key=FinalProj
-datacenter=sjc01
+datacenter=dal13
 os=CENTOS_LATEST_64
 cpu=2
