@@ -136,3 +136,8 @@ Follow the same procedure as above, however in the -seeds configuration in cassa
 	cassandra@cqlsh> alter keyspace w251twitter with replication = { 'class' : 'SimpleStrategy', 'replication_factor' :2};
 
 and for the third node change the replication factor to 3 (that should be enough replication so further updates not required).
+
+## Decommissioning
+Login to the server and type:
+	nodetool -h localhost decommission
+then shutdown the service and remove it.  If there are aliases to it then remove or replace them
