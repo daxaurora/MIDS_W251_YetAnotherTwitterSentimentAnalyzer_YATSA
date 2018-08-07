@@ -137,10 +137,7 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 stream = Stream(auth, l)
 #stream.sample()
-stream.filter(languages = ['en'],
-              track = [
-                 '#antman', '#ant-man', '#antmanandthewasp',
-                 '#AntMan', '#Ant-Man', '#Ant-man', 'Antman',
-                 'TheWasp', '#AntManandTheWasp', '#AntManAndTheWasp', '#Trump', '#trump'
-                  ])
+stream.filter(languages = ['en'], \
+              track = [ '#antman', '#ant-man', '#antmanandthewasp', '#AntMan', '#Ant-Man', '#Ant-man', 'Antman', 'TheWasp', '#AntManandTheWasp', '#AntManAndTheWasp', '#Trump', '#trump'])
+# '#Obama', '#obama', '#mtvhottest', '#mmvas', '#happyexolday', '#kcamexico', '#iheartradiommvas', '#obamaday', '#exo', '#got7', '#ffgroupbts', '#4yearsasexol', '#tbworld2018', '#wewantjustice', '#wannaone', '#gg4eva', '#southkorea', '#bts', '#eyesonyouinsg', '#kcaargentina', '#army', '#redvelvet', '#baekhyun', '#kpop', '#teenchoice']) , '#choicefandom', '#bambam', '#ikon', '#bebest', '#got7worldtour', '#kai', '#btsarmy', '#ffsingleinmyblood', '#sjxoshopping', '#seventeen', '#ffsinglewolves', '#suho', '#exol_abyrinth', '#sotocatop', '#nct', '#lalobrito', '#rt', '#nowplaying', '#kangdaniel', '#bighitprotectbts', '#job', '#bbacharityconcert12', '#saveshadowhunters', '#sofiareyes123', '#cd9', '#gnbgarantiadepaz', '#bryanmouquetrendy', '#rm', '#coders', '#eyesonyou', '#axel', '#biggbosstelugu2', '#taehyung', '#karolsevilla', '#ffsinglenotears', '#summermagic', '#haash', '#jimin', '#powerup', '#peckpalitchoke', '#hiring', '#carolinakopelioff', '#naniunfitforbb2host', '#elf', '#losiento', '#twice', '#fifaeworldcup', '#mya', '#kaushalarmy', '#mark', '#quran', '#4yearswithexol', '#jungkook', '#ruggeropasquarelli', '#maga', '#micaviciconteig', '#blackpink', '#np', '#4ago', '#nintendoswitch', '#bbacharityconcert', '#jinyoung', '#micaelistas', '#careerarc', '#jin', '#newprofilepic', '#ps4share', '#hdpyidestekliyoruz', '#lutteo', '#aldubendures', '#got7insg', '#ffartistcamila', '#parkjihoon', '#straykids', '#soyluna', '#cncowners', '#trapadrive' ])
 
