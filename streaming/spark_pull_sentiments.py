@@ -60,7 +60,7 @@ def get_sentiment(tweet_text):
                 sent_value = s["sentimentValue"]
                 print("sent_value: {}".format(sent_value))
                 sentiment += derive_sentiment(sent, int(sent_value))
-        
+
     print("Returning derived sentiment: {}".format(sentiment))
 
     return sentiment
@@ -69,17 +69,17 @@ def get_sentiment(tweet_text):
 def get_tweet_sentiment(tweet):
     tweet_dict = json.loads(tweet)
     print("tweet dict:\n{}".format(tweet_dict))
-    
+
     hashtags = tweet_dict['hashtags']
     if (hashtags):
         tweet_text = remove_non_ascii(json.loads(tweet)['text'])
         sentiment = get_sentiment(tweet_text)
         tweet_dict['sentiment'] = sentiment
-    
+
         return mapTweetDict(tweet_dict)
     else:
         return None
-    
+
 
 def setup_kafka_stream():
     kvs = KafkaUtils.createDirectStream(ssc, [topic], {"metadata.broker.list": brokers})
@@ -143,14 +143,16 @@ if __name__ == "__main__":
     brokers, topic = sys.argv[1:]
 
     kvs = setup_kafka_stream()
-    
+
     nlp = StanfordCoreNLP('http://localhost:9000')
 
     tweets = kvs.filter(lambda x: x is not None).filter(lambda x: x is not '').map(lambda x: json.loads(x[1]))
     tweets.count().map(lambda x: 'Tweets in this batch: %s' % x).pprint()
 
-    sentiment_stream = tweets.map(lambda tweet: get_tweet_sentiment(tweet))
-    sentiment_stream.foreachRDD(lambda rdd : save_tweet_to_cassandra(rdd))
-                                              
+    sentiment_stream = tweets.map(lambda tweet: get_tweet_sentiment(tweet)).filter(lambda x: x is not None)
+    # sentiment_stream.foreachRDD(lambda rdd : save_tweet_to_cassandra(rdd))
+    # replaced by this line:
+    sentiment_stream.saveToCassandra("w251twitter", "sentiment")
+
     ssc.start()
     ssc.awaitTermination()
