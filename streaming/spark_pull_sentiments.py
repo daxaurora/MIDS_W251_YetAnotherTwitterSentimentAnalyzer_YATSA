@@ -11,6 +11,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
 from pyspark.sql.types import *
 
+from pyspark_cassandra import streaming
 
 #import pyspark-cassandra
 #$import pyspark_cassandra.streaming
@@ -99,8 +100,17 @@ def mapTweetDict(tweet_dict):
     mappedTimestamp = "TEST_TIMESTAMP"
     mappedScreenName = "TEST_SCREEN_NAME"
 
-    flattenedMap = (mappedID, mappedHashtags, mappedText, mappedGeo, mappedUserID, mappedTimestamp, mappedScreenName, mappedSentiment)
-
+    # flattenedMap = (mappedID,
+    # mappedHashtags, mappedText, mappedGeo, mappedUserID, mappedTimestamp, mappedScreenName, mappedSentiment)
+    flattenedMap = (tweet_dict['id'],
+                    mappedGeo,
+                    mappedHashtags,
+                    datetime.datetime.now(),
+                    mappedScreenName,
+                    tweet_dict['sentiment'],
+                    tweet_dict['text'],
+                    mappedTimestamp,
+                    mappedUserID)
 #    flattenedMap = (tweet_dict['id'], tweet_dict['hashtags'], tweet_dict['text'],
 #                    tweet_dict['geo'], tweet_dict['user_id'], tweet_dict['timestamp'],
 #                    tweet_dict['screen_name'], tweet_dict['sentiment'], datetime.datetime.now())
