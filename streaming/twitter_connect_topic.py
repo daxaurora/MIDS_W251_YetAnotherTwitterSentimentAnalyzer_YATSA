@@ -11,7 +11,7 @@ session=cluster.connect('w251twitter')
 tags = session.execute('select * from concepts')
 hashtags = []
 for tag in tags:
-    hashtags.extend(row.hashtag_list)
+    hashtags.extend(tag.hashtag_list)
 # Get Twitter credentials from Cassandra
 creds = session.execute("select * from twitter_connections where username = 'laura'")
 for cred in creds:
