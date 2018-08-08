@@ -1,0 +1,79 @@
+---
+- name: Install Kafka nodes
+  hosts: kafka
+  become: no
+
+  tasks:
+  - name: Creates pip directory
+    file: path=/root/.pip/ state=directory group=root owner=root
+
+  - name: Insert local yum repo configuration
+    template:
+      src: /home/ansible/Files/local.repo
+      dest: /etc/yum.repos.d/local.repo
+
+  - name: Insert local java configuration
+    template:
+      src: /home/ansible/Files/java.sh
+      dest: /etc/profile.d/java.sh
+
+  - name: Insert local pip repo configuration
+    template:
+      src: /home/ansible/Files/pip.conf
+      dest: /root/.pip/pip.conf
+
+  - name: Disallow password authentication
+    lineinfile: dest=/etc/ssh/sshd_config
+      regexp="^PasswordAuthentication"
+      line="PasswordAuthentication no"
+      state=present
+    notify: Restart ssh
+
+  - name: Add required packages
+    yum: pkg={{item}} state=installed
+    with_items: 
+      - net-tools
+      - java-1.8.0-openjdk.x86_64
+      - python36u
+      - python36u-pip.noarch
+
+  - name: Add Kafka
+    unarchive:
+      src: http://10.73.183.212/Kafka/kafka_2.11-0.8.2.2.tgz
+      dest: /opt
+      creates: /opt/kafka_2.11-0.8.2.2
+      remote_src: yes
+
+  - name: Symbolic link to Kafka
+    file:
+      src: /opt/kafka_2.11-0.8.2.2
+      dest: /opt/kafka
+      state: link
+
+  - name: Set permissions to Kafka folder
+    file: path=/opt/kafka/ owner=root group=root recurse=yes
+
+  - name: Add hosts entries for primary cassandra servers
+    lineinfile:
+      path: /etc/hosts
+      line: '10.73.183.253   kafka1 zookeeperhost'
+
+  - name: Add hosts entries for primary cassandra servers
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: '10.73.183.242   kafka2'
+
+  - name: Set up kafka configuration
+    template:
+      src: /home/ansible/Templates/server.properties
+      dest: /opt/kafka/config/server.properties
+
+  - name: Start kafka
+    shell: /opt/kafka/bin/kafka-server-start.sh -daemon config/server.properties
+    args:
+      chdir: /opt/kafka
+
+  handlers:
+  - name: Restart ssh
+    service: name=ssh state=restarted
