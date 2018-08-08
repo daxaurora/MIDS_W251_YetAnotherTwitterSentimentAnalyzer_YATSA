@@ -26,7 +26,7 @@ class StdOutListener(StreamListener):
     def on_data(self,data):
         if data and ('delete' not in data):
             producer.send_messages("twitter", data.encode('utf-8'))
-            print(tweet_json)
+            print(data)
         return True
 
     def on_error(self, status):
