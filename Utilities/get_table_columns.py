@@ -12,4 +12,4 @@ rows = session.execute(
                        WHERE keyspace_name='w251twitter';
                        """)
 for row in rows:
-    print(row.table_name + ": " + row.column_name + " (Column Type: " + row.kind + ")")
+    print(row.table_name + ": " + row.column_name + ", Type: " + row.type + ", Column Type: " + row.kind)
