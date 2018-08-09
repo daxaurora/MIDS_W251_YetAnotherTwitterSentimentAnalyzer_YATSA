@@ -124,10 +124,21 @@ def get_concept(hashtags):
     """ This function will query the Cassandra database to match hashtags
     in a tweet with a corresponding concept.
     """
-    # TO COME - testing
-    #for tag in hashtags:
-         # use hashtag_map imported at the top of this file
+    # Concepts and related hashtags are imported from Cassandra above
+    #if hashtag:
+        #for tag in hashtags:
+            #for concept_name, hashtag_list in hashtag_map.items():
+                #if tag in hashtag_list:
+                    #concept = concept_name
+            #break
+                #else:
+                    #concept = None
+    #else:
+        #concept = None
+    # This below is only for testing the flow of this funciont
+    # Delete once the above mapping is functioning properly
     concept = "Ant Man and The Wasp"
+    
     return concept
 
 def tweet_summary(tweet):
@@ -178,12 +189,15 @@ def main():
 
     # Create RDD to summarize tweets for summary table in Cassandra
     # TO COME - still testing to map the concept correctly
+    # Have not tested/error controlled if concept = None
     summary_stream = tweets.map(lambda tweet: tweet_summary(tweet)).filter(lambda x: x is not None)
     # Print to screen to confirm output is correct
     summary_stream.pprint()
     # This stream still needs to reduce by key to produce two variables:
     # Average the sentiments for all tweets with that concept in each window
     # Count up the sentiments for all tweets with that concept in each window
+    # Also add an insertion time for each window, maybe using this code:
+    # insertion_time = datetime.datetime.now()
     # summary_stream.saveToCassandra("w251twitter", "summary")
 
     # Start Spark
