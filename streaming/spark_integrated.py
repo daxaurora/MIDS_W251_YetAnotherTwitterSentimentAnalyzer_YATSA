@@ -162,8 +162,6 @@ def main():
     kvs = KafkaUtils.createDirectStream(ssc,
                                         [topic],
                                         {"metadata.broker.list": brokers})
-    # Set up connection to Stanford NLP Sentiment analysis
-    nlp = StanfordCoreNLP('http://localhost:9000')
     # Set up DStream of tweets
     tweets = kvs.filter(lambda x: x is not None).filter(lambda x: x is not '').map(lambda x: json.loads(x[1]))
 
@@ -180,7 +178,7 @@ def main():
 
     # Create RDD to summarize tweets for summary table in Cassandra
     # TO COME - testing
-    tweets.map(lambda tweet: tweet_summary(tweet).pprint()
+    tweets.map(lambda tweet: tweet_summary(tweet).pprint())
     # This stream still needs to reduce by key to produce two variables:
     # Average the sentiments for all tweets with that concept in each window
     # Count up the sentiments for all tweets with that concept in each window
@@ -193,4 +191,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # Set up connection to Stanford NLP Sentiment analysis
+    # Placed here so that it will be available to all functions
+    nlp = StanfordCoreNLP('http://localhost:9000')
     main()
