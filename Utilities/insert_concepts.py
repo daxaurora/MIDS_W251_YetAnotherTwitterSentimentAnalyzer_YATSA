@@ -6,7 +6,7 @@ session.execute(
 	"""
         INSERT INTO w251twitter.CONCEPTS (concept, hashtag_list)
         VALUES ('Trump',
-        ['#Trump', '#trump'])
+        ['#Trump', '#trump', '#maga'])
 	""")
 session.execute(
 	"""
@@ -15,4 +15,28 @@ session.execute(
         ['#antman', '#ant-man', '#antmanandthewasp',
         '#AntMan', '#Ant-Man', '#Ant-man', 'Antman',
         'TheWasp', '#AntManandTheWasp', '#AntManAndTheWasp'])
+	""")
+session.execute(
+	"""
+        INSERT INTO w251twitter.CONCEPTS (concept, hashtag_list)
+        VALUES ('Obama',
+        ['#Obama','#obama','#obamaday'])
+	""")
+session.execute(
+	"""
+        INSERT INTO w251twitter.CONCEPTS (concept, hashtag_list)
+        VALUES ('K-Pop',
+        ['#kpop','#ijin','#jinyoung','#jungkook','#parkjihoon'])
+	""")
+session.execute(
+	"""
+        INSERT INTO w251twitter.CONCEPTS (concept, hashtag_list)
+        VALUES ('Teen',
+        ['#teenchoice','#seventeed','#teen','#choicefandom', '#straykids'])
+	""")
+session.execute(
+	"""
+        INSERT INTO w251twitter.CONCEPTS (concept, hashtag_list)
+        VALUES ('Careers',
+        ['#careerarc','#hiring','#coders'])
 	""")
