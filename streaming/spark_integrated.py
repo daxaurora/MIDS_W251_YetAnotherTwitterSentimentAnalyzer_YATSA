@@ -165,9 +165,7 @@ def main():
     # Set up connection to Stanford NLP Sentiment analysis
     nlp = StanfordCoreNLP('http://localhost:9000')
     # Set up DStream of tweets
-    tweets = kvs.filter(lambda x: x is not None).
-                 filter(lambda x: x is not '').
-                 map(lambda x: json.loads(x[1]))
+    tweets = kvs.filter(lambda x: x is not None).filter(lambda x: x is not '').map(lambda x: json.loads(x[1]))
 
     # Print statements for testing - can remove or comment out for production
     #tweets.count().map(lambda x:
@@ -177,8 +175,7 @@ def main():
 
     # Create RDD to process tweet data for sentiment table in Cassandra
     sentiment_stream = tweets.map(lambda tweet:
-                                  get_tweet_sentiment(tweet))
-                                  .filter(lambda x: x is not None)
+                                  get_tweet_sentiment(tweet)).filter(lambda x: x is not None)
     sentiment_stream.saveToCassandra("w251twitter", "sentiment")
 
     # Create RDD to summarize tweets for summary table in Cassandra
