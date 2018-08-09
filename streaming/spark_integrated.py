@@ -126,7 +126,7 @@ def get_concept(hashtags):
     """
     # TO COME - testing
     #for tag in hashtags:
-         # look for hashtags in topic/hashtag data from Cassandra here
+         # use hashtag_map imported at the top of this file
     concept = "Ant Man and The Wasp"
     return concept
 
@@ -177,12 +177,13 @@ def main():
     sentiment_stream.saveToCassandra("w251twitter", "sentiment")
 
     # Create RDD to summarize tweets for summary table in Cassandra
-    # TO COME - testing
-    tweets.map(lambda tweet: tweet_summary(tweet).pprint())
+    # TO COME - still testing to map the concept correctly
+    summary_stream = tweets.map(lambda tweet: tweet_summary(tweet)).filter(lambda x: x is not None)
+    # Print to screen to confirm output is correct
+    summary_stream.pprint()
     # This stream still needs to reduce by key to produce two variables:
     # Average the sentiments for all tweets with that concept in each window
     # Count up the sentiments for all tweets with that concept in each window
-    # summary_stream = tweets.map(lambda tweet: tweet_summary(tweet)).filter(lambda x: x is not None)
     # summary_stream.saveToCassandra("w251twitter", "summary")
 
     # Start Spark
