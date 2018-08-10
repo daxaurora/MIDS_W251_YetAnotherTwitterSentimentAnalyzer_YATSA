@@ -3,12 +3,19 @@ Based on Paul's install guide started here: https://docs.google.com/document/d/1
 
 Create the VM - sizing not required yet - **add a hostname and, if creating a VM from the gateway, specify the FinalProj ssh key for passwordless connection from the gateway server**
 
-    slcli vs create --datacenter=dal.13 --hostname=<hostname> --domain=w251.mids
+    slcli vs create -y --datacenter=dal13 --hostname=<hostname> --domain=w251.mids
 		--billing=hourly --key=<yourkey> --cpu=2 --memory=4096 --disk=100 --os=CENTOS_LATEST_64
 
 Login:
 
     ssh root@<IP>
+
+Add Cassandra cluster hosts to `/etc/hosts`:
+```
+<private_IP>  <hostname> cassandra1
+<private_IP>  <hostname> cassandra2
+<private_IP>  <hostname> cassandra3
+```
 
 Update password to something longer than the short one assigned in Softlayer, and/or remove passwordless authentication:
 
@@ -62,7 +69,7 @@ Set up passwordless ssh into localhost:
 Reread the profile (with java environment from previous step)
 
     . /etc/profile
-**Should we disable password based logins?**
+**Should we disable password based logins? - YES, see above instructions**
 Download, install and start Kafka 0.8.  I’m installing in /opt, but could be anywhere:  
 
     cd /opt
@@ -104,13 +111,27 @@ Install git and clone our project's repo into the root directory. Also install u
 
 Note: to push changes into the git repo from the cluster will require setting up ssh keys or configuring collaborators on the VS. So without that the standalone cluster can only clone or pull the repo.
 
+Add a directory for saving logs from the streaming process:
+```
+mkdir /var/log/w251
+```
+
 Install the Stanford Core NLP server:
 ```
+cd /opt
 wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-02-27.zip
 unzip stanford-corenlp-full-2018-02-27.zip
 ```
 
-To run the final version of the streaming process, follow instructions in the streaming folder, titled "stream_instructions.md"
+**Note question from Walt:**  
+?? Should we add:
+```
+ln -s stanford-corenlp-full-2018-02-27/ stanford
+```
+
+
+To run the final version of the streaming process, follow instructions in the streaming folder, titled "stream_instructions.md"  
+**Important - when running the spark-submit command, make sure to specify the correct local host IP for master (currently set to `laura`, which is not a spark cluster, only a standalone testing server)**
 
 The instructions below refer to previous versions of the streaming process.  
 
