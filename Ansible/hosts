@@ -1,0 +1,30 @@
+cashost1 ansible_ssh_host=10.73.183.227
+cashost2 ansible_ssh_host=10.73.183.233
+cashost3 ansible_ssh_host=10.73.183.207
+kafka1 ansible_ssh_host=10.187.134.82
+kafka2 ansible_ssh_host=10.73.183.250
+kafka3 ansibls_ssh_host=10.73.183.253
+test10 ansible_ssh_host=10.73.183.213
+
+[CassandraMasters]
+cashost1
+cashost2
+cashost3
+
+[CassandraSlaves]
+
+[ZookeeperKafka]
+kafka1
+
+[KafkaBrokers]
+kafka2
+kafka3
+
+[SparkMaster]
+test10
+
+[SparkSlaves]
+
+[ThriftServer]
+
+[RemovedNodes]
