@@ -1,18 +1,31 @@
 # Setting up Kafka and Spark on single node and pulling in tweets
 Based on Paul's install guide started here: https://docs.google.com/document/d/1ycJo7ZFT63LK5kXDTUkmes5sg9uQbusUXtxm1XWBwxU/edit?ts=5b4fbf8e#
 
-Create the VM - sizing not required yet - **replace information in brackets**
+Create the VM - sizing not required yet - **add a hostname and, if creating a VM from the gateway, specify the FinalProj ssh key for passwordless connection from the gateway server**
 
-    slcli vs create --datacenter=<datacenter, i.e. sjc01> --hostname=<hostname> --domain=<domainname>
+    slcli vs create --datacenter=dal.13 --hostname=<hostname> --domain=w251.mids
 		--billing=hourly --key=<yourkey> --cpu=2 --memory=4096 --disk=100 --os=CENTOS_LATEST_64
 
 Login:
 
-    ssh @root<IP>
+    ssh root@<IP>
 
-Optional: update password to something longer than the short one assigned in Softlayer:
+Update password to something longer than the short one assigned in Softlayer, and/or remove passwordless authentication:
 
-    passwd root
+```
+passwd root
+```
+AND/OR:  
+Edit `/etc/ssh/sshd_config` to prevent brute force attacks:
+```
+PermitRootLogin prohibit-password
+PasswordAuthentication no
+```
+After updating `sshd_config`, restart the ssh daemon. For our servers running on Centos7:
+```
+systemctl restart sshd.service
+```
+
 Update:
 
     yum -y update; reboot
@@ -23,7 +36,7 @@ Install required packages, python, iptables, java:
 Install python requirements:
 
     pip3.6 install --upgrade pip
-    pip3 install kafka-python python-twitter tweepy
+    pip3 install kafka-python python-twitter tweepy python-dateutil pyspark pycorenlp cassandra-driver
 Setup iptables firewall:  
 Edit /etc/sysconfig/iptables and make and after the first line starting with -A add:
 
@@ -67,6 +80,15 @@ Download, install and start spark:
     cp conf/log4j.properties.template conf/log4j.properties
 Edit `conf/log4j.properties` and change the first INFO to WARN (reduce the logging)
 
+Create a spark-env.sh file from the template:
+```
+cp /opt/spark/conf/spark-env.sh.template  /opt/spark/conf/spark-env.sh
+```
+Then add to `spark-env.sh` the following line to ensure that the spark-submit command will use the correct Python version 3.6 to run the python files:
+```
+PYSPARK_PYTHON=python3.6
+```
+
 Start spark:
 
     sbin/start-all.sh
@@ -74,13 +96,23 @@ Start spark:
 Get the streaming jar file.  This needs to match the version of Kafka (0.8.2), Scala (2.11) and Spark 2.3.1:
 
     cd /opt/spark/jars; wget http://central.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.3.1/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar
-Install git and clone our project's repo into the root directory:
+Install git and clone our project's repo into the root directory. Also install unzip (required for Stanford NLP server):
 
-    yum -y install git  
+    yum -y install git unzip
 	cd /root
 	git clone https://github.com/daxaurora/MIDS_W251_Benchmarking.git
 
 Note: to push changes into the git repo from the cluster will require setting up ssh keys or configuring collaborators on the VS. So without that the standalone cluster can only clone or pull the repo.
+
+Install the Stanford Core NLP server:
+```
+wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-02-27.zip
+unzip stanford-corenlp-full-2018-02-27.zip
+```
+
+To run the final version of the streaming process, follow instructions in the streaming folder, titled "stream_instructions.md"
+
+The instructions below refer to previous versions of the streaming process.  
 
 Two python scripts are in the streaming folder of the repo: twitter_connect.py and spark_pull_tweets.py.
 
