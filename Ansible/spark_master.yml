@@ -1,0 +1,114 @@
+---
+# Allow all host to be hitted even if nothing is executed
+- hosts: all
+  tasks:
+    - name: Ping 
+      ping:
+
+- name: Install spark master
+  hosts: SparkMaster
+  become: no
+
+  tasks:
+  - name: Creates pip directory
+    file: path=/root/.pip/ state=directory group=root owner=root
+
+  - name: Insert local yum repo configuration
+    template:
+      src: /home/ansible/Files/local.repo
+      dest: /etc/yum.repos.d/local.repo
+
+  - name: Insert local java configuration
+    template:
+      src: /home/ansible/Files/java.sh
+      dest: /etc/profile.d/java.sh
+
+  - name: Insert local pip repo configuration
+    template:
+      src: /home/ansible/Files/pip.conf
+      dest: /root/.pip/pip.conf
+
+  - name: Disallow password authentication
+    lineinfile: dest=/etc/ssh/sshd_config
+      regexp="^PasswordAuthentication"
+      line="PasswordAuthentication no"
+      state=present
+    notify: Restart ssh
+
+  - name: Add required packages
+    yum: pkg={{item}} state=installed
+    with_items: 
+      - net-tools
+      - java-1.8.0-openjdk.x86_64
+      - python36u
+      - python36u-pip.noarch
+
+  - name: Install numpy
+    pip:
+      name: pip,numpy,pandas,kafka-python
+      executable: pip3.6
+
+  - name: Add Spark
+    unarchive:
+      src: http://10.73.183.212/Spark/spark-2.3.1-bin-hadoop2.7.tgz
+      dest: /opt
+      creates: /opt/spark-2.3.1-bin-hadoop2.7
+      remote_src: yes
+
+  - name: Symbolic link to Spark
+    file:
+      src: /opt/spark-2.3.1-bin-hadoop2.7
+      dest: /opt/spark
+      state: link
+
+  - name: update spark config file
+    template:
+      src: /software/Spark/spark-defaults.conf
+      dest: /opt/spark/conf/spark-defaults
+
+  - name: Add localhost as sparkmaster
+    lineinfile:
+      path: /etc/hosts
+      line: '{{ ansible_host }} {{inventory_hostname}} sparkmaster'
+
+  - name: Add hosts entries for primary cassandra servers
+    lineinfile:
+      path: /etc/hosts
+      line: '10.73.183.227   cassandra1'
+
+  - name: Add hosts entries for primary cassandra servers
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: '10.73.183.233   cassandra2'
+
+  - name: Add hosts entries for primary cassandra servers
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: '10.73.183.207   cassandra3'
+
+#  - name: Add hosts entries for primary cassandra servers
+#    lineinfile:
+#      path: /etc/hosts
+#      state: present
+#      line: |
+#            {% set comma = joiner(",") %}
+#            {% forr host in groups['cassandra'] -%}
+#            {{ comma () }}{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}
+#            {%- endfor -%}
+#
+
+
+  - name: "Build hosts file"
+    lineinfile: 
+      dest: /etc/hosts
+      regexp: '.*{{ item }}$' 
+      line: "{{ hostvars[item]['ansible_default_ipv4'].address }} {{item}}"
+      state: present
+    with_items: 
+      - "{{ groups['kafka'] }}"
+
+  handlers:
+  - name: Restart ssh
+    service: name=ssh state=restarted
