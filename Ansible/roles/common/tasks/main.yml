@@ -3,6 +3,16 @@
     src: local.repo
     dest: /etc/yum.repos.d/local.repo
 
+- name: Update Hosts File for others
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ item }}$'
+    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids"
+
+state: present
+  with_items:
+    - "{{ groups['MandatoryHosts'] }}"
+
 - name: Creates pip directory
   file: path=/root/.pip/ state=directory group=root owner=root
 
@@ -16,8 +26,8 @@
     dest: /root/.pip/pip.conf
     content: |
       [global]
-      index-url = http://10.73.183.212/pip/simple
-      trusted-host = 10.73.183.212
+      index-url = http://piphost/pip/simple
+      trusted-host = piphost
 
 - name: Disallow password authentication
   lineinfile: 

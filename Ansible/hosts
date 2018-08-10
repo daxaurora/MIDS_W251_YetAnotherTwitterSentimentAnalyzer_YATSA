@@ -5,6 +5,14 @@ kafka1 ansible_ssh_host=10.187.134.82
 kafka2 ansible_ssh_host=10.73.183.250
 kafka3 ansibls_ssh_host=10.73.183.253
 test10 ansible_ssh_host=10.73.183.213
+yumhost ansible_ssh_host=10.73.183.212
+softrepo ansible_ssh_host=10.73.183.212
+piphost ansible_ssh_host=10.73.183.212
+
+[MandatoryHosts]
+yumhost
+softrepo
+piphost
 
 [CassandraMasters]
 cashost1
