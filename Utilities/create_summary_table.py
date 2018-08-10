@@ -6,7 +6,6 @@ session.execute(
 	"""
         CREATE TABLE w251twitter.SUMMARY (concept text,
 										  sentiment int,
-										  tweet_count int,
 										  insertion_time timestamp,
-										  PRIMARY KEY (concept))
+										  PRIMARY KEY (concept, insertion_time))
 	""")
