@@ -125,20 +125,16 @@ def get_concept(hashtags):
     in a tweet with a corresponding concept.
     """
     # Concepts and related hashtags are imported from Cassandra above
-    #if hashtag:
-        #for tag in hashtags:
-            #for concept_name, hashtag_list in hashtag_map.items():
-                #if tag in hashtag_list:
-                    #concept = concept_name
-            #break
-                #else:
-                    #concept = None
-    #else:
-        #concept = None
-    # This below is only for testing the flow of this funciont
-    # Delete once the above mapping is functioning properly
-    concept = "Ant Man and The Wasp"
-    
+    if hashtags:
+        for tag in hashtags:
+            for concept_name, hashtag_list in hashtag_map.items():
+                if tag in hashtag_list:
+                    concept = concept_name
+                    break
+                else:
+                    concept = None
+    else:
+        concept = None
     return concept
 
 def tweet_summary(tweet):
@@ -147,11 +143,13 @@ def tweet_summary(tweet):
     """
     tweet_dict = json.loads(tweet)
     hashtags = tweet_dict['hashtags']
+    # Add 1 to each tweet for aggregating later
+    tweet_count = 1
     if (hashtags):
         tweet_text = remove_non_ascii(json.loads(tweet)['text'])
         sentiment = get_sentiment(tweet_text)
         concept = get_concept(hashtags)
-        return concept, sentiment
+        return concept, (sentiment, tweet_count)
     else:
         return None
 
@@ -174,30 +172,32 @@ def main():
                                         [topic],
                                         {"metadata.broker.list": brokers})
     # Set up DStream of tweets
-    tweets = kvs.filter(lambda x: x is not None).filter(lambda x: x is not '').map(lambda x: json.loads(x[1]))
-
-    # Print statements for testing - can remove or comment out for production
-    #tweets.count().map(lambda x:
-    #                   'Total number of tweets in this %d-second batch: %s'
-    #                   % (window_size, x)).pprint()
-    # tweets.map(lambda tweet: tweet).pprint()
-
+    tweets = kvs.filter(lambda x: x is not None) \
+                .filter(lambda x: x is not '') \
+                .map(lambda x: json.loads(x[1]))
     # Create RDD to process tweet data for sentiment table in Cassandra
-    sentiment_stream = tweets.map(lambda tweet:
-                                  get_tweet_sentiment(tweet)).filter(lambda x: x is not None)
+    sentiment_stream = tweets \
+                       .map(lambda tweet: get_tweet_sentiment(tweet)) \
+                       .filter(lambda x: x is not None)
     sentiment_stream.saveToCassandra("w251twitter", "sentiment")
 
     # Create RDD to summarize tweets for summary table in Cassandra
-    # TO COME - still testing to map the concept correctly
-    # Have not tested/error controlled if concept = None
-    summary_stream = tweets.map(lambda tweet: tweet_summary(tweet)).filter(lambda x: x is not None)
+    summary_stream = tweets \
+                     .map(lambda tweet: tweet_summary(tweet)) \
+                     .filter(lambda x: x is not None)
+    # What this returns:         return concept, (sentiment, tweet_count)
+                     #.reduceByKeyandWindow(lambda x,y: update this)
+                     #.map(lambda x, y, z: (x, y, z, datetime.datetime.now()))
     # Print to screen to confirm output is correct
     summary_stream.pprint()
-    # This stream still needs to reduce by key to produce two variables:
-    # Average the sentiments for all tweets with that concept in each window
-    # Count up the sentiments for all tweets with that concept in each window
-    # Also add an insertion time for each window, maybe using this code:
-    # insertion_time = datetime.datetime.now()
+
+    test_stream = summary_stream \
+                  .reduceByKeyandWindow(lambda x, y: (x[0]+y[0], x[1]+y[1])) ) \
+                  .mapValues(lambda v: v[0]/v[1]) 
+
+    test_stream.pprint()
+
+    # Then test it going into Cassandra
     # summary_stream.saveToCassandra("w251twitter", "summary")
 
     # Start Spark
