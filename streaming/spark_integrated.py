@@ -164,7 +164,6 @@ def main():
     session = SparkSession(sc)
     sqlContext = SQLContext(sc)
     ssc = StreamingContext(sc, window_size)
-    ssc.checkpoint()
     # Set up receiving Twitter stream from Kafka
     brokers, topic = sys.argv[1:]
     kvs = KafkaUtils.createDirectStream(ssc,
@@ -185,7 +184,8 @@ def main():
                      .filter(lambda x: x is not None) \
                      .filter(lambda x: x[0] is not None) \
                      .reduceByKey(lambda x, y: x + y) \
-                     .map(lambda x: x + (datetime.datetime.now(),))
+                     .map(lambda x: x + (datetime.datetime.now().isoformat(),))
+    # Current error is that datetime format is not passing to Cassandra
     # Print statement for testing
     #summary_stream.pprint()
     summary_stream.saveToCassandra("w251twitter", "summary")
