@@ -84,7 +84,11 @@ def get_tweet_json(data):
 
 
 # Set up Kafka producer from Twitter
-kafka = KafkaClient("localhost:9092")
+# Updated by Paul, the new one allows us to connect to remote kafka servers
+# and spread the load.  If you need to run locally add an alias into /etc/hosts
+# for one of these kafka? servers and make it resolve to the local host
+#kafka = KafkaClient("localhost:9092")
+kafka = KafkaClient("kafka1:9092, kafka2:9092, kafka3:9092, kafka4:9092")
 producer=SimpleProducer(kafka)
 l = StdOutListener()
 auth = OAuthHandler(consumer_key, consumer_secret)

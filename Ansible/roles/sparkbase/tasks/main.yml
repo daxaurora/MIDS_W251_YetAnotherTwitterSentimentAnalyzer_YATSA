@@ -1,3 +1,6 @@
+- name: Create w251 log directory
+  file: path=/var/log/w251 state=directory group=root owner=root
+
 - name: Install pip python requirements
   pip:
     name: pip

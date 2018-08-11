@@ -81,3 +81,5 @@
     state: absent
   with_items:
     - "{{ groups['RemovedNodes'] }}"
+    - "{{ groups['CassandraDecommission'] }}"
+    - "{{ groups['SparkDecommission'] }}"
