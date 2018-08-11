@@ -10,6 +10,7 @@ piphost ansible_ssh_host=10.73.183.212
 spark1 ansible_ssh_host=10.73.183.203
 spark2 ansible_ssh_host=10.73.183.204
 spark3 ansible_ssh_host=10.73.183.218
+kprod1 ansible_ssh_host=10.73.183.213
 
 [MandatoryHosts]
 yumhost
@@ -34,6 +35,9 @@ kafka3
 
 [SparkMaster]
 spark1
+
+[KafkaProducers]
+kprod1
 
 [SparkSlaves]
 spark2

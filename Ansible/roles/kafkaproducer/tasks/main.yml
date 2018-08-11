@@ -1,0 +1,55 @@
+- name: Install pip python requirements
+  pip:
+    name: pip
+    executable: pip3.6
+    state: latest
+
+- name: Install python requirements
+  pip:
+    name: "{{ item }}"
+    executable: pip3.6
+    state: present
+  with_items:
+    - pip
+    - certifi
+    - chardet
+    - future
+    - idna
+    - oauthlib
+    - py4j
+    - pycorenlp
+    - PySocks
+    - pypandoc
+    - python-dateutil
+    - requests
+    - requests-oauthlib
+    - setuptools
+    - six
+    - urllib3
+    - pyspark
+    - python-twitter
+    - cassandra-driver
+    - tweepy
+    - kafka-python
+
+
+- name: Add iptables
+  yum:
+    pkg={{item}} state=installed
+  with_items:
+    - iptables
+    - iptables-services
+
+- name: Iptables block incoming traffic on public device
+  iptables:
+    chain: INPUT
+    action: insert
+    in_interface: eth1
+    ctstate: NEW
+    jump: DROP
+
+- name: Enable iptables
+  service: 
+    name: iptables 
+    state: started
+    enabled: yes
