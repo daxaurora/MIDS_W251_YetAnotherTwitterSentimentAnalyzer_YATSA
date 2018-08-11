@@ -16,7 +16,7 @@ from pyspark.sql.types import *
 from cassandra.cluster import Cluster
 
 # Define batch size in seconds
-window_size = 20
+window_size = 60
 
 # Connect to Cassandra to get data from database
 cluster=Cluster(['cassandra1','cassandra2','cassandra3'])
@@ -143,13 +143,11 @@ def tweet_summary(tweet):
     """
     tweet_dict = json.loads(tweet)
     hashtags = tweet_dict['hashtags']
-    # Add 1 to each tweet for aggregating later
-    tweet_count = 1
     if (hashtags):
         tweet_text = remove_non_ascii(json.loads(tweet)['text'])
         sentiment = get_sentiment(tweet_text)
         concept = get_concept(hashtags)
-        return concept, (sentiment, tweet_count)
+        return concept, sentiment
     else:
         return None
 
@@ -166,6 +164,7 @@ def main():
     session = SparkSession(sc)
     sqlContext = SQLContext(sc)
     ssc = StreamingContext(sc, window_size)
+    ssc.checkpoint()
     # Set up receiving Twitter stream from Kafka
     brokers, topic = sys.argv[1:]
     kvs = KafkaUtils.createDirectStream(ssc,
@@ -180,26 +179,16 @@ def main():
                        .map(lambda tweet: get_tweet_sentiment(tweet)) \
                        .filter(lambda x: x is not None)
     sentiment_stream.saveToCassandra("w251twitter", "sentiment")
-
     # Create RDD to summarize tweets for summary table in Cassandra
     summary_stream = tweets \
                      .map(lambda tweet: tweet_summary(tweet)) \
-                     .filter(lambda x: x is not None)
-    # What this returns:         return concept, (sentiment, tweet_count)
-                     #.reduceByKeyandWindow(lambda x,y: update this)
-                     #.map(lambda x, y, z: (x, y, z, datetime.datetime.now()))
-    # Print to screen to confirm output is correct
-    summary_stream.pprint()
-
-    test_stream = summary_stream \
-                  .reduceByKeyandWindow(lambda x, y: (x[0]+y[0], x[1]+y[1])) ) \
-                  .mapValues(lambda v: v[0]/v[1]) 
-
-    test_stream.pprint()
-
-    # Then test it going into Cassandra
-    # summary_stream.saveToCassandra("w251twitter", "summary")
-
+                     .filter(lambda x: x is not None) \
+                     .filter(lambda x: x[0] is not None) \
+                     .reduceByKey(lambda x, y: x + y) \
+                     .map(lambda x: x + (datetime.datetime.now(),))
+    # Print statement for testing
+    #summary_stream.pprint()
+    summary_stream.saveToCassandra("w251twitter", "summary")
     # Start Spark
     ssc.start()
     ssc.awaitTermination()
