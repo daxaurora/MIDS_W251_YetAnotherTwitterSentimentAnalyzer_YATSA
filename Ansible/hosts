@@ -8,6 +8,8 @@ yumhost ansible_ssh_host=10.73.183.212
 softrepo ansible_ssh_host=10.73.183.212
 piphost ansible_ssh_host=10.73.183.212
 spark1 ansible_ssh_host=10.73.183.213
+spark2 ansible_ssh_host=10.73.183.229
+spark3 ansible_ssh_host=10.73.183.242
 
 [MandatoryHosts]
 yumhost
@@ -32,6 +34,8 @@ kafka3
 spark1
 
 [SparkSlaves]
+spark2
+spark3
 
 [ThriftServer]
 

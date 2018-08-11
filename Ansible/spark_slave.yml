@@ -4,7 +4,7 @@
   tasks: []
 
 - name: Install spark nodes
-  hosts: SparkMaster
+  hosts: SparkSlaves
   become: no
 
   roles:
