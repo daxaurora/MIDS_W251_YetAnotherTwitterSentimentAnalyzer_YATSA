@@ -7,9 +7,9 @@ kafka3 ansibls_ssh_host=10.73.183.253
 yumhost ansible_ssh_host=10.73.183.212
 softrepo ansible_ssh_host=10.73.183.212
 piphost ansible_ssh_host=10.73.183.212
-spark1 ansible_ssh_host=10.73.183.213
-spark2 ansible_ssh_host=10.73.183.229
-spark3 ansible_ssh_host=10.73.183.242
+spark1 ansible_ssh_host=10.73.183.203
+spark2 ansible_ssh_host=10.73.183.204
+spark3 ansible_ssh_host=10.73.183.218
 
 [MandatoryHosts]
 yumhost
@@ -22,6 +22,8 @@ cashost2
 cashost3
 
 [CassandraSlaves]
+
+[CassandraDecommission]
 
 [ZookeeperKafka]
 kafka1

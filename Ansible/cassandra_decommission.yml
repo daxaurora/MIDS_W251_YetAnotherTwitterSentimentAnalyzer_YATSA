@@ -1,6 +1,6 @@
 ---
 - name: Decommission Cassandra node
-  hosts: test1
+  hosts: CassandraDecommission
   become: no
 
   tasks:

@@ -1,8 +1,4 @@
 ---
-# Loads all servers into the playbook so their hosts file can be updated later
-- hosts: all
-  tasks: []
-
 - name: Update hosts after decommissioning
   hosts: all
   become: no

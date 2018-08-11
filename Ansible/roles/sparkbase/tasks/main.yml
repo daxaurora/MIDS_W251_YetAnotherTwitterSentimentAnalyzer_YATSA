@@ -8,7 +8,7 @@
   pip:
     name: "{{ item }}"
     executable: pip3.6
-    state: lastest
+    state: present
   with_items:
     - pip
     - certifi
