@@ -137,6 +137,12 @@ def get_concept(hashtags):
         concept = None
     return concept
 
+def summary_to_db(summary):
+    concept = summary[0]
+    insertion_time = datetime.datetime.now()
+    sentiment = summary[1]
+    return concept, insertion_time, sentiment
+
 def tweet_summary(tweet):
     """This function takes in each tweet and returns elements
     for the summary table in the Cassandra database.
@@ -184,10 +190,7 @@ def main():
                      .filter(lambda x: x is not None) \
                      .filter(lambda x: x[0] is not None) \
                      .reduceByKey(lambda x, y: x + y) \
-                     .map(lambda x: x + (datetime.datetime.now().isoformat(),))
-    # Current error is that datetime format is not passing to Cassandra
-    # Print statement for testing
-    #summary_stream.pprint()
+                     .map(lambda x: (summary_to_db(x)))
     summary_stream.saveToCassandra("w251twitter", "summary")
     # Start Spark
     ssc.start()
