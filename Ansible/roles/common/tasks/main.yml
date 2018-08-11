@@ -3,16 +3,6 @@
     src: local.repo
     dest: /etc/yum.repos.d/local.repo
 
-- name: Update Hosts File for others
-  lineinfile:
-    dest: /etc/hosts
-    regexp: '.*{{ item }}$'
-    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids"
-
-state: present
-  with_items:
-    - "{{ groups['MandatoryHosts'] }}"
-
 - name: Creates pip directory
   file: path=/root/.pip/ state=directory group=root owner=root
 
@@ -52,6 +42,7 @@ state: present
     - python36u
     - python36u-pip.noarch
     - lsof
+    - unzip
 
 - name: Insert local java configuration
   copy:

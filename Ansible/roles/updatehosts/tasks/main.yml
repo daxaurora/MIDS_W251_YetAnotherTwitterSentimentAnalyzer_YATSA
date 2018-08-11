@@ -1,8 +1,8 @@
 - name: Update Hosts file for Cassandra Masters
   lineinfile:
     dest: /etc/hosts
-    regexp: '.*{{ item }} cassandra.$'
-    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} cassandra{{item | regex_replace('^cashost(.*)$', '\\1')}}"
+    regexp: '.*[ \t]{{ item }}[ \t]|.*[ \t]{{ item }}$'
+    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids cassandra{{item | regex_replace('^cashost(.*)$', '\\1')}}"
     state: present
   with_items:
     - "{{ groups['CassandraMasters'] }}"
@@ -10,7 +10,7 @@
 - name: Update Hosts File for zookeeper
   lineinfile:
     dest: /etc/hosts
-    regexp: '.*{{ item }} zookeepermaster$'
+    regexp: '.*[ \t]{{ item }}[ \t]|.*[ \t]{{ item }}$'
     line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids zookeepermaster"
     state: present
   with_items:
@@ -19,8 +19,8 @@
 - name: Update Hosts File for Spark Master
   lineinfile:
     dest: /etc/hosts
-    regexp: '.*{{ item }} sparkmaster$'
-    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} sparkmaster"
+    regexp: '.*[ \t]{{ item }}[ \t]|.*[ \t]{{ item }}$'
+    line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids sparkmaster"
     state: present
   with_items:
     - "{{ groups['SparkMaster'] }}"
@@ -28,7 +28,7 @@
 - name: Update Hosts File for others
   lineinfile:
     dest: /etc/hosts
-    regexp: '.*{{ item }}$'
+    regexp: '.*[ \t]{{ item }}[ \t]|.*[ \t]{{ item }}$'
     line: "{{ hostvars[item]['ansible_default_ipv4'].address }}    {{item}} {{item}}.w251.mids"
     state: present
   with_items:
@@ -36,6 +36,15 @@
     - "{{ groups['KafkaBrokers'] }}"
     - "{{ groups['SparkSlaves'] }}"
     - "{{ groups['ThriftServer'] }}"
+
+- name: Update Hosts File services
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*[ \t]{{ item }}[ \t].*|.*[ \t]{{ item }}$'
+    line: "{{ hostvars[item]['ansible_eth0'].ipv4.address }}    {{item}} {{item}}.w251.mids"
+    state: present
+  with_items:
+    - "{{ groups['MandatoryHosts'] }}"
 
 - name: remove hostname mapped to loopback ipv4
   lineinfile:

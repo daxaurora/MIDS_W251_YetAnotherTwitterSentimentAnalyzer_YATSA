@@ -3,11 +3,12 @@
 - hosts: all
   tasks: []
 
-- name: Install zookeeper nodes
-  hosts: ZookeeperKafka
+- name: Install spark nodes
+  hosts: SparkMaster
   become: no
 
   roles:
     - updatehosts
     - common
-    - zookeeper
+    - sparkbase
+    - sparkslave

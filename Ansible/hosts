@@ -4,10 +4,10 @@ cashost3 ansible_ssh_host=10.73.183.207
 kafka1 ansible_ssh_host=10.187.134.82
 kafka2 ansible_ssh_host=10.73.183.250
 kafka3 ansibls_ssh_host=10.73.183.253
-test10 ansible_ssh_host=10.73.183.213
 yumhost ansible_ssh_host=10.73.183.212
 softrepo ansible_ssh_host=10.73.183.212
 piphost ansible_ssh_host=10.73.183.212
+spark1 ansible_ssh_host=10.73.183.213
 
 [MandatoryHosts]
 yumhost
@@ -29,7 +29,7 @@ kafka2
 kafka3
 
 [SparkMaster]
-test10
+spark1
 
 [SparkSlaves]
 

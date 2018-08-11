@@ -1,0 +1,8 @@
+- name: Pause before starting spark master
+  pause:
+    seconds: 10
+
+- name: start spark
+  shell: sbin/start-master.sh
+  args:
+    chdir: /opt/spark
