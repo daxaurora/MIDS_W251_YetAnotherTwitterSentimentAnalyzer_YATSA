@@ -1,6 +1,5 @@
 #!/usr/bin/python3.6
 
-import npyscreen
 import curses
 from curses import wrapper
 import pandas as pd
@@ -20,11 +19,15 @@ def floatpos(f):
   return '{:.2f}'.format(f).zfill(5)
 
 def get_stats(df):
-  usage_mem = df['free'].mean() / df['tot'].mean() * 100
+  usage_mem = (1 - (df['free'].mean() / df['tot'].mean())) * 100
   usage_cpu = 100 - df['id'].mean()
   last_heartbeat = df['time'].max()
+  most_recent = df[df['time'] == last_heartbeat]
+  mem_free = most_recent['free'].sum() / 1024
+  mem_tot = most_recent['tot'].sum() / 1024
   seconds_since = (pd.to_datetime(time.time() * 1000000000) - last_heartbeat).total_seconds()
-  return usage_mem, usage_cpu, seconds_since
+  
+  return usage_mem, usage_cpu, mem_free, mem_tot, seconds_since
 
 
 def draw_background(stdscr):
@@ -34,22 +37,26 @@ def draw_background(stdscr):
 
 def render_node(win, util, node):
   node_data = util[util['node'] == node]
-  usage_mem, usage_cpu, since = get_stats(node_data)
-  win.addstr('{0: <20}{1: >16}{2}%  {3}%   {4:.2f}\n'.format('   - ' + node,
-                                                  ' ',
-                                                  floatpos(usage_cpu),
-                                                  floatpos(usage_mem),
-                                                  since))
+  usage_mem, usage_cpu, free, total, since = get_stats(node_data)
+  win.addstr('{0: <36}{1}%  {2}%  {3:.1f}/{4:.1f}{5}{6:.2f}\n'.format('   - ' + node,
+                                                              floatpos(usage_cpu),
+                                                              floatpos(usage_mem),
+                                                              free,
+                                                              total,
+                                                              ' '*(22-len('{0:.1f}/{1:.1f}'.format(free,total))),
+                                                              since))
 
 def render_group(stdscr, util, group, y):
   grp = util[util['group'] == group]
-  usage_mem, usage_cpu, since = get_stats(grp)
+  usage_mem, usage_cpu, free, total, since = get_stats(grp)
   nodes = grp['node'].unique()
-  stdscr.addstr('{0: <16}{1: >20}{2}%  {3}%   {4:.2f}\n'.format(' - ' + group,
-                                                     ' ',
-                                                     floatpos(usage_cpu),
-                                                     floatpos(usage_mem),
-                                                     since))
+  stdscr.addstr('{0: <36}{1}%  {2}%  {3:.1f}/{4:.1f}{5}{6:.2f}\n'.format(' - ' + group,
+                                                                 floatpos(usage_cpu),
+                                                                 floatpos(usage_mem),
+                                                                 free,
+                                                                 total,
+                                                                 ' '*(22-len('{0:.1f}/{1:.1f}'.format(free,total))),
+                                                                 since))
   for node in nodes:
     render_node(stdscr, util, node)
   return len(nodes) + 1
@@ -58,7 +65,7 @@ def render_group(stdscr, util, group, y):
 def draw_win(stdscr, util):
   groups = util['group'].unique()
   stdscr.addstr('\n')
-  stdscr.addstr(' '*36 + 'cpu     mem      time since last heartbeat (s)\n')
+  stdscr.addstr(' '*36 + 'cpu     mem     free/total (MB)       time since last heartbeat (s)\n')
   y = 2
   for group in groups:
     y += render_group(stdscr, util, group, y)
