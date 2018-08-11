@@ -44,7 +44,7 @@ class StdOutListener(StreamListener):
 
                 producer.send_messages("twitter", tweet_json.encode('utf-8'))
                 # Comment out this print line for production
-                print(tweet_json)
+                #print(tweet_json)
         return True
 
     def on_error(self, status):
