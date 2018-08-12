@@ -6,11 +6,6 @@
 - name: Creates pip directory
   file: path=/root/.pip/ state=directory group=root owner=root
 
-#- name: Insert local pip repo configuration
-  #template:
-    #src: /home/ansible/Files/pip.conf
-    #dest: /root/.pip/pip.conf
-
 - name: Insert local pip repo configuration
   copy:
     dest: /root/.pip/pip.conf

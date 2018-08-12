@@ -32,6 +32,8 @@
     - tweepy
     - kafka-python
 
+- name: Creates w251 log directory
+  file: path=/var/log/w251/ state=directory group=root owner=root
 
 - name: Add iptables
   yum:
@@ -53,3 +55,15 @@
     name: iptables 
     state: started
     enabled: yes
+
+- name: Copy the twitter producer script to the server
+  copy:
+    src: /root/MIDS_W251_Benchmarking/streaming/twitter_connect_integrated.py
+    dest: /opt/twitter_connect_integrated.py
+    mode: 0711
+
+- name: Execute producer script
+  shell: nohup /opt/twitter_connect_integrated.py 1>/dev/null 2>/var/log/w251/twitter_connect_integrated.log &
+  args:
+    chdir: /opt/
+  
