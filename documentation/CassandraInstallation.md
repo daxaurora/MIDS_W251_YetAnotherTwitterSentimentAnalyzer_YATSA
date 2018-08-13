@@ -2,14 +2,14 @@
 
 Create the VM - requires a 2 disk server
 
-    slcli -y vs create -t Git/MIDS_W251_Benchmarking/configuration/Templates/SoftLayer/small_2disk_private.slcli --hostname=cashost1
+    slcli -y vs create -t Git/MIDS_W251_YetAnotherTwitterSentimentAnalysis_YATSA/SoftLayerTemplates/small_2disk_private.slcli --hostname=cashost1
 
 Copy packages from gateway server, login to the gateway server and run:
 
 	scp -r /software/Cassandra root@<IP>:/tmp/
 	scp /software/local.repo root@<IP>:/etc/yum.repos.d/
 	scp -r /software/pip root@<IP>:/tmp/
-    
+
 Login to new Cassandra server:
 
     ssh root@<IP>
@@ -19,7 +19,7 @@ Update:
     yum -y update; reboot
 
 Set up the second disk:
-	
+
 	1. Identiify the disk using:
 		fdisk -l | egrep "^Disk /dev"
 		we assume /dev/xvdc for the rest of the instructions, but change as appropriate
@@ -54,7 +54,7 @@ Get the 10.X.Y.Z ip address of the host and record it
 	ip addr show
 
 Edit the /etc/hosts file, comment out the lines where the hostname is define with 127.0.0.1 and ::1 and fill in the hostname with the 10.X.Y.Z ip address, e.g.
-	
+
 	#127.0.0.1 cashost1.w251.mids cashost1
 	10.54.41.184    cashost1.w251.mids cashost1
 	#::1 cashost1.w251.mids cashost1
@@ -89,7 +89,7 @@ Check for errors:
 Some warnings can be ignored
 
 Verify it:
-	
+
 	nodetool status
 
 should show something like:
