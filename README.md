@@ -1,4 +1,4 @@
-# MIDS_W251_YetAnotherTwitterSentimentAnalysis_YATSA
+# MIDS_W251_YetAnotherTwitterSentimentAnalyzer_YATSA
 This repo represents group work on a UC Berkeley MIDS  Final Project for the class "W251 - Scaling Up! Really Big Data."
 
 Group members: Paul Durkin, Ye (Kevin) Pang, Laura Williams, Walt Burge, Matt Proetsch
