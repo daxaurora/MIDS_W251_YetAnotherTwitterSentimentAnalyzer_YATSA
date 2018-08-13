@@ -3,6 +3,6 @@
     seconds: 10
 
 - name: start spark
-  shell: sbin/start-slave.sh spark://sparkmaster:7077
+  shell: sleep 10 ; sbin/start-slave.sh spark://sparkmaster:7077
   args:
     chdir: /opt/spark

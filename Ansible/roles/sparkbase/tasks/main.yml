@@ -1,13 +1,25 @@
 - name: Create w251 log directory
   file: path=/var/log/w251 state=directory group=root owner=root
 
-- name: Install pip python requirements
+- name: add authorized key
+  authorized_key:
+    user: root
+    state: present
+    key: http://softrepo/Spark/id_rsa.pub
+
+- name: add an ssh key
+  copy:
+    src: /software/Spark/id_rsa
+    dest: /root/.ssh/id_rsa
+    mode: 0600
+
+- name: Upgrade python pip
   pip:
     name: pip
     executable: pip3.6
     state: latest
 
-- name: Install python requirements
+- name: Install python required packages
   pip:
     name: "{{ item }}"
     executable: pip3.6
@@ -65,17 +77,11 @@
     creates: /opt/spark/jars/spark-streaming-kafka-0-8-assembly_2.11-2.3.1.jar
     remote_src: yes
 
-- name: add authorized key
-  authorized_key:
-    user: root
-    state: present
-    key: http://softrepo/Spark/id_rsa.pub
-
-- name: add an ssh key
-  copy:
-    src: /software/Spark/id_rsa
-    dest: /root/.ssh/id_rsa
-    mode: 0600
+- name: Add spark required packages
+  unarchive:
+    src: http://softrepo/Spark/spark_package_dependencies.tgz
+    dest: /
+    remote_src: yes
 
 - name: update spark defaults config file
   copy:
