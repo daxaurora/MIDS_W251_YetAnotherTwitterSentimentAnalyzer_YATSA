@@ -17,7 +17,9 @@ java -mx5g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -timeout 1000
 
 Second window:
 ##### Start up a twitter stream
-Currently this is set up to print tweets to the screen. To turn this off, just comment out the print line in the on-data method in the StdOutListener class.
+For testing, this can be set up to print tweets to the screen: Un-comment the print line in the on-data method in the StdOutListener class.  
+
+IMPORTANT:  The `twitter_connect_integrated.py` file is currently set up to work with a Kafka cluster instead of a single server.  If using these instructions to run this process on a single server, change the kafka variable to this instead: `kafka = KafkaClient("localhost:9092")`
 ```
 python3.6 /root/MIDS_W251_Benchmarking/streaming/twitter_connect_integrated.py
 ```
