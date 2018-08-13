@@ -2,13 +2,13 @@
 
 Create the VM - something like
 
-    slcli -y vs create -t Git/MIDS_W251_Benchmarking/configuration/Templates/SoftLayer/small_2disk_private.slcli --hostname=cashost1
+    slcli -y vs create -t Git/MIDS_W251_YetAnotherTwitterSentimentAnalysis_YATSA/SoftLayerTemplates/small_2disk_private.slcli --hostname=cashost1
 
 Copy packages from gateway server, login to the gateway server and run:
 
 	scp /software/local.repo root@<IP>:/etc/yum.repos.d/
 	scp -r /software/pip root@<IP>:/tmp/
-    
+
 Login to new server:
 
     ssh root@<IP>
